@@ -176,12 +176,29 @@ plot_cluster_profiles <- function(clust_obj, df_norm, k) {
          xpd = NA,
          bty = "n",
          cex = 0.8)
-
+  
   layout(1)
 }
 
+plot_cluster_boxplots <- function(clust_obj, df_norm, k) {
+  while (dev.cur() > 1) dev.off() 
+  dev.new(width = 12, height = 8) 
+  cluster_cut <- cutree(clust_obj, k = k)
+  n_cols <- ncol(df_norm)
+  n_rows <- ceiling(n_cols / 3) 
+  par(mfrow = c(n_rows, 3), mar = c(3, 2, 2, 1), oma = c(0, 0, 1, 0)) 
+  for (i in 1:n_cols) {
+    boxplot(df_norm[, i] ~ cluster_cut,
+            main = colnames(df_norm)[i],
+            ylab = "Нормированное значение",
+            xlab = "Кластеры")
+  }
+  mtext(paste("Распределение показателей по", k, "кластерам"), outer = TRUE, cex = 1, font = 2)
+  par(mfrow = c(1, 1)) 
+}
 plot_cluster_profiles(clust.datas, df_sc_norm, k = 3)
 plot_cluster_boxplots(clust.datas, df_sc_norm, k = 3)
+
 
 # 6. Выполнить кластеризацию датасета по k-means
 library(ggplot2)
@@ -238,5 +255,3 @@ plot_3d_clusters <- function(df_norm, kmeans_result, k) {
 }
 
 plot_3d_clusters(df_sc_norm, kmeans_3, k = 3)
-
-
